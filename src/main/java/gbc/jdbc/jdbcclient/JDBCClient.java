@@ -14,6 +14,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class JDBCClient {
+
+  public static final String JAR_NAME = "jdbctestclient";
+  public static final String JAR_VERSION = "1.0.1";
+
   static String user;
   static String password;
   static String url;
@@ -58,28 +62,20 @@ public class JDBCClient {
 
       BufferedWriter out = new BufferedWriter(new FileWriter(outputFilename));
 
-      String numOfColumns = null;
       String sqlLine = null;
       while ((sqlLine = br.readLine()) != null)   {
         System.out.println("SQL: " + sqlLine);
-
-        if (sqlLine.startsWith("--")) {
-          numOfColumns = sqlLine.substring(sqlLine.lastIndexOf(":")+1);
-          System.out.println("number of columns: " + numOfColumns);
-          continue;
-        } else {
-          PreparedStatement stmt = con.prepareStatement(sqlLine);
-          if (stmt.execute()) {
-            ResultSet resultSet = stmt.getResultSet();
-            while (resultSet.next()) {
-              int max = Integer.parseInt(numOfColumns);
-              for (int i=1; i<=max; i++) {
-                out.write("\"" + resultSet.getString(i) + "\"");
-                if (i<max) {
-                  out.write(",");
-                } else {
-                  out.newLine();
-                }
+        PreparedStatement stmt = con.prepareStatement(sqlLine);
+        if (stmt.execute()) {
+          ResultSet resultSet = stmt.getResultSet();
+          while (resultSet.next()) {
+            int columns = getNumOfColumns(sqlLine);
+            for (int i=1; i<=columns; i++) {
+              out.write("\"" + resultSet.getString(i) + "\"");
+              if (i<columns) {
+                out.write(",");
+              } else {
+                out.newLine();
               }
             }
           }
@@ -96,9 +92,36 @@ public class JDBCClient {
     }
   }
 
+  protected static int getNumOfColumns(final String sqlLine) {
+
+    if (sqlLine == null || sqlLine.trim().isEmpty()) {
+      return 0;
+    }
+
+    String lowerCaseStatement = sqlLine.toLowerCase().trim();
+    String columnExtract = null;
+    try {
+      columnExtract = sqlLine.substring(lowerCaseStatement.indexOf("select") + "select".length() + 1,  lowerCaseStatement.indexOf("from"));
+    } catch (StringIndexOutOfBoundsException e) {
+      return 0;
+    }
+
+    if (columnExtract.isEmpty()) {
+      return 0;
+    }
+
+    int counter = 0;
+    for (int i=0; i<columnExtract.length(); i++) {
+      if (columnExtract.charAt(i) == ',') {
+        counter++;
+      }
+    }
+    return ++counter;
+  }
+
   public static void printUsage() {
     System.out.println("Usage: ");
-    System.out.println("java -jar jdbctestclient-1.0.1.jar [user] [password] [url(jdbc:oracle:oci:@sid) or (jdbc:oracle:thin:@1.2.3.4:1521:sid)] [script_name] [outputfile]");
+    System.out.println("java -jar " + JAR_NAME + "-" + JAR_VERSION + ".jar [user] [password] [url(jdbc:oracle:oci:@sid) or (jdbc:oracle:thin:@1.2.3.4:1521:sid)] [script_name] [outputfile]");
   }
 
   public static Connection getOracleJDBCConnection(String url, String user, String password) {
