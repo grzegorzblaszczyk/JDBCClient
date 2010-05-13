@@ -1,0 +1,10 @@
+bin
+bin/*
+target
+target/*
+log
+log/*
+cobertura.ser
+*.log
+*.class
+!.gitignore
