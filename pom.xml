@@ -4,10 +4,10 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>gbc.jdbc</groupId>
-	<artifactId>jdbctestclient</artifactId>
-	<name>GBC JDBC Test Client</name>
+	<artifactId>jdbcclient</artifactId>
+	<name>GBC JDBC Client</name>
 	<packaging>jar</packaging>
-	<version>1.0.1</version>
+	<version>1.0.2</version>
 	<description>
   </description>
 	<developers>
@@ -118,13 +118,17 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<configuration>
-          <archive>
-            <manifest>
-              <mainClass>gbc.jdbc.jdbcclient.JDBCClient</mainClass>
-              <addClasspath>true</addClasspath>
-              <classpathPrefix>lib</classpathPrefix>
-            </manifest>
-          </archive>
+		          <archive>
+		            <manifest>
+		              <mainClass>gbc.jdbc.jdbcclient.Main</mainClass>
+		              <addClasspath>true</addClasspath>
+		              <classpathPrefix>lib</classpathPrefix>
+		            </manifest>
+		          </archive>
+		          <includes>
+            		<include>**/*.class</include>
+            		<include>**/*.properties</include>
+         		  </includes>
 				</configuration>
         <executions>
           <execution>
