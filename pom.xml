@@ -24,9 +24,7 @@
 
 	</developers>
 	<licenses>
-		<!--
-			<license> <name>GPLv3</name> <url>gpl-3.0.txt</url> <distribution>repo</distribution> </license>
-		-->
+			<license> <name>MIT License</name> <url>LICENSE</url> <distribution>repo</distribution> </license>
 	</licenses>
 
 	<build>
